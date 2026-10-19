@@ -1,5 +1,10 @@
+import { isPastEvent, isValidIsoDate } from "./dates";
+
+// Fonctions pures : elles renvoient un message d'erreur, ou undefined si le champ est valide.
+
 export const PASSWORD_MIN_LENGTH = 6;
 
+// Format simple : quelque chose, un @, quelque chose, un point, quelque chose, sans espaces.
 // Volontairement tolérant : la seule vraie preuve qu'un email existe, c'est d'y envoyer un message.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -33,4 +38,32 @@ export function validatePasswordConfirmation(
 /** Vrai si au moins un champ du formulaire a une erreur. */
 export function hasErrors(errors: Record<string, string | undefined>): boolean {
   return Object.values(errors).some((message) => message !== undefined);
+}
+
+// Événements
+
+export const EVENT_TITLE_MAX_LENGTH = 80;
+export const EVENT_DESCRIPTION_MAX_LENGTH = 500;
+
+export function validateEventTitle(title: string): string | undefined {
+  if (title.trim() === "") return "Le titre est obligatoire.";
+  if (title.trim().length > EVENT_TITLE_MAX_LENGTH) {
+    return `${EVENT_TITLE_MAX_LENGTH} caractères maximum.`;
+  }
+  return undefined;
+}
+
+/** La description est facultative, mais limitée en longueur. */
+export function validateEventDescription(description: string): string | undefined {
+  if (description.trim().length > EVENT_DESCRIPTION_MAX_LENGTH) {
+    return `${EVENT_DESCRIPTION_MAX_LENGTH} caractères maximum.`;
+  }
+  return undefined;
+}
+
+/** Utilisée à la création uniquement : un nouvel événement ne peut pas être dans le passé. */
+export function validateFutureDate(isoDate: string, now: Date = new Date()): string | undefined {
+  if (!isValidIsoDate(isoDate)) return "Date invalide.";
+  if (isPastEvent(isoDate, now)) return "La date doit être dans le futur.";
+  return undefined;
 }
