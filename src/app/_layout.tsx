@@ -1,17 +1,57 @@
 import { Stack } from "expo-router";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { theme } from "@/constants/theme";
+import { AuthProvider } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
-// Stack racine : tous les écrans de l'app passent par lui.
-// Les routes existent dès que le fichier existe. Déclarer un Stack.Screen
-// sert uniquement à configurer ses options (titre, en-tête...).
 export default function RootLayout() {
+  // Le Provider enveloppe toute l'app : tous les écrans peuvent appeler useAuth().
+  return (
+    <AuthProvider>
+      <RootNavigator />
+    </AuthProvider>
+  );
+}
+
+// Composant séparé obligatoire : useAuth() doit être appelé SOUS le Provider.
+// Appelé directement dans RootLayout, il serait au-dessus du Provider et lèverait l'erreur.
+function RootNavigator() {
+  const { user, isLoading } = useAuth();
+
+  // Tant que la session n'est pas lue, on ne sait pas quels écrans autoriser.
+  // Sans ce test, l'écran de connexion clignoterait au lancement pour un utilisateur déjà connecté.
+  if (isLoading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
+  const isLoggedIn = user !== null;
+
   return (
     <Stack>
-      {/* Les groupes ont leur propre navigator : on masque l'en-tête du Stack racine
-          pour ne pas avoir deux en-têtes empilés. */}
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="event/[id]" options={{ title: "Détail" }} />
-      <Stack.Screen name="event/form" options={{ title: "Événement" }} />
+      {/* Écrans réservés aux utilisateurs connectés */}
+      <Stack.Protected guard={isLoggedIn}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="event/[id]" options={{ title: "Détail" }} />
+        <Stack.Screen name="event/form" options={{ title: "Événement" }} />
+      </Stack.Protected>
+
+      {/* Écrans réservés aux visiteurs non connectés */}
+      <Stack.Protected guard={!isLoggedIn}>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      </Stack.Protected>
     </Stack>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: theme.colors.background,
+  },
+});
