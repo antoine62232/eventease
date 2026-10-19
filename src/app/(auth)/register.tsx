@@ -1,11 +1,11 @@
+// src/app/(auth)/register.tsx
 import { Link } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
-import { useKeyboardHeight } from "@/hooks/useKeyboardHeight";
 import {
   hasErrors,
   validateEmail,
@@ -23,7 +23,6 @@ type RegisterErrors = {
 
 export default function RegisterScreen() {
   const { signUp } = useAuth();
-  const keyboardHeight = useKeyboardHeight();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,55 +54,54 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ScrollView
-      style={styles.screen}
-      // Espace ajouté sous le formulaire quand le clavier est ouvert : on peut défiler jusqu'au bouton.
-      contentContainerStyle={[styles.container, { paddingBottom: theme.spacing.lg + keyboardHeight }]}
-      keyboardShouldPersistTaps="handled"
-    >
-      <Text style={styles.title}>Créer un compte</Text>
+    // padding : le contenu remonte de la hauteur du clavier (testé sur Android en edge-to-edge).
+    <KeyboardAvoidingView style={styles.screen} behavior="padding">
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <Text style={styles.title}>Créer un compte</Text>
 
-      <Input label="Nom" value={name} onChangeText={setName} error={errors.name} autoComplete="name" />
-      <Input
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-        error={errors.email}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoComplete="email"
-        placeholder="nom@exemple.fr"
-      />
-      <Input
-        label="Mot de passe"
-        value={password}
-        onChangeText={setPassword}
-        error={errors.password}
-        secureTextEntry
-        autoComplete="new-password"
-      />
-      <Input
-        label="Confirmer le mot de passe"
-        value={confirmation}
-        onChangeText={setConfirmation}
-        error={errors.confirmation}
-        secureTextEntry
-        autoComplete="new-password"
-      />
+        <Input label="Nom" value={name} onChangeText={setName} error={errors.name} autoComplete="name" />
+        <Input
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
+          error={errors.email}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+          placeholder="nom@exemple.fr"
+        />
+        <Input
+          label="Mot de passe"
+          value={password}
+          onChangeText={setPassword}
+          error={errors.password}
+          secureTextEntry
+          autoComplete="new-password"
+        />
+        <Input
+          label="Confirmer le mot de passe"
+          value={confirmation}
+          onChangeText={setConfirmation}
+          error={errors.confirmation}
+          secureTextEntry
+          autoComplete="new-password"
+        />
 
-      {submitError !== null && <Text style={styles.submitError}>{submitError}</Text>}
+        {submitError !== null && <Text style={styles.submitError}>{submitError}</Text>}
 
-      <Button title="S'inscrire" onPress={handleSubmit} loading={isSubmitting} />
+        <Button title="S'inscrire" onPress={handleSubmit} loading={isSubmitting} />
 
-      <Link href="/login" style={styles.link}>
-        Déjà un compte ? Se connecter
-      </Link>
-    </ScrollView>
+        <Link href="/login" style={styles.link}>
+          Déjà un compte ? Se connecter
+        </Link>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.colors.background },
+  // flexGrow et non flex : le contenu peut dépasser l'écran et défiler quand le clavier est ouvert.
   container: { flexGrow: 1, justifyContent: "center", padding: theme.spacing.lg, gap: theme.spacing.md },
   title: { fontSize: theme.fontSize.xl, fontWeight: "700", color: theme.colors.primary, textAlign: "center", marginBottom: theme.spacing.md },
   submitError: { fontSize: theme.fontSize.sm, color: theme.colors.danger, textAlign: "center" },

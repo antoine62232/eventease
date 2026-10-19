@@ -1,11 +1,11 @@
+// src/app/(auth)/login.tsx
 import { Link } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
-import { useKeyboardHeight } from "@/hooks/useKeyboardHeight";
 import { hasErrors, validateEmail } from "@/utils/validation";
 
 type LoginErrors = {
@@ -15,7 +15,6 @@ type LoginErrors = {
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
-  const keyboardHeight = useKeyboardHeight();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<LoginErrors>({}); // erreurs de format, sous chaque champ
@@ -45,47 +44,44 @@ export default function LoginScreen() {
   };
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={[styles.container, { paddingBottom: theme.spacing.lg + keyboardHeight }]}
-      keyboardShouldPersistTaps="handled"
-    >
-      <Text style={styles.title}>EventEase</Text>
-      <Text style={styles.subtitle}>Connecte-toi pour voir les événements</Text>
+    <KeyboardAvoidingView style={styles.screen} behavior="padding">
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <Text style={styles.title}>EventEase</Text>
+        <Text style={styles.subtitle}>Connecte-toi pour voir les événements</Text>
 
-      <Input
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-        error={errors.email}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoComplete="email"
-        placeholder="nom@exemple.fr"
-      />
-      <Input
-        label="Mot de passe"
-        value={password}
-        onChangeText={setPassword}
-        error={errors.password}
-        secureTextEntry
-        autoComplete="password"
-      />
+        <Input
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
+          error={errors.email}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+          placeholder="nom@exemple.fr"
+        />
+        <Input
+          label="Mot de passe"
+          value={password}
+          onChangeText={setPassword}
+          error={errors.password}
+          secureTextEntry
+          autoComplete="password"
+        />
 
-      {submitError !== null && <Text style={styles.submitError}>{submitError}</Text>}
+        {submitError !== null && <Text style={styles.submitError}>{submitError}</Text>}
 
-      <Button title="Se connecter" onPress={handleSubmit} loading={isSubmitting} />
+        <Button title="Se connecter" onPress={handleSubmit} loading={isSubmitting} />
 
-      <Link href="/register" style={styles.link}>
-        Pas encore de compte ? S'inscrire
-      </Link>
-    </ScrollView>
+        <Link href="/register" style={styles.link}>
+          Pas encore de compte ? S'inscrire
+        </Link>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: theme.colors.background },
-  // flexGrow et non flex : le contenu peut dépasser l'écran et défiler quand le clavier est ouvert.
   container: { flexGrow: 1, justifyContent: "center", padding: theme.spacing.lg, gap: theme.spacing.md },
   title: { fontSize: theme.fontSize.xl, fontWeight: "700", color: theme.colors.primary, textAlign: "center" },
   subtitle: { fontSize: theme.fontSize.md, color: theme.colors.textMuted, textAlign: "center", marginBottom: theme.spacing.md },
