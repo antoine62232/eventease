@@ -3,9 +3,14 @@ export type User = {
   name: string;
   email: string;
   passwordHash: string;
+  salt: string;
   createdAt: string;
 };
 
-// Ce qu'on garde en mémoire pour l'utilisateur connecté.
-// Le hash n'a rien à faire dans l'état de l'app : on le retire.
-export type PublicUser = Omit<User, "passwordHash">;
+export type PublicUser = Omit<User, "passwordHash" | "salt">;
+
+export type RegisterInput = {
+  name: string;
+  email: string;
+  password: string;
+};

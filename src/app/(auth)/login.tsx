@@ -4,10 +4,34 @@ import { Alert, StyleSheet, View } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { theme } from "@/constants/theme";
+import { getSession, login, logout, register } from "@/services/authService";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleRegister = async () => {
+    try {
+      const user = await register({ name: "Test", email, password });
+      Alert.alert("Inscrit", JSON.stringify(user));
+    } catch (error) {
+      Alert.alert("Erreur", error instanceof Error ? error.message : "Erreur inconnue");
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      await logout();
+      const user = await login(email, password);
+      Alert.alert("Connecté", JSON.stringify(user));
+    } catch (error) {
+      Alert.alert("Erreur", error instanceof Error ? error.message : "Erreur inconnue");
+    }
+  };
+
+  const handleSession = async () => {
+    Alert.alert("Session", JSON.stringify(await getSession()));
+  };
 
   return (
     <View style={styles.container}>
@@ -26,10 +50,9 @@ export default function LoginScreen() {
         secureTextEntry
         error={password.length > 0 && password.length < 6 ? "6 caractères minimum" : undefined}
       />
-      <Button title="Se connecter" onPress={() => Alert.alert("Saisie", email)} />
-      <Button title="Secondaire" variant="secondary" onPress={() => {}} />
-      <Button title="Supprimer" variant="danger" onPress={() => {}} />
-      <Button title="Chargement" loading onPress={() => {}} />
+      <Button title="S'inscrire (test)" onPress={handleRegister} />
+      <Button title="Se connecter (test)" variant="secondary" onPress={handleLogin} />
+      <Button title="Session ?" variant="secondary" onPress={handleSession} />
     </View>
   );
 }
