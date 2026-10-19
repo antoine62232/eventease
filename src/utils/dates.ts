@@ -39,3 +39,14 @@ export function sortByDateAsc<T extends { date: string }>(items: T[]): T[] {
   // Comparateur : négatif si a vient avant b, positif sinon.
   return [...items].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
+
+/**
+ * Ordre d'affichage de la liste : à venir d'abord (plus proche en premier),
+ * puis passés (plus récent en premier). items doit déjà être trié par date croissante.
+ */
+export function orderForDisplay<T extends { date: string }>(items: T[], now: Date = new Date()): T[] {
+  const upcoming = items.filter((item) => !isPastEvent(item.date, now));
+  // reverse() modifie le tableau, mais ici il s'applique au nouveau tableau créé par filter.
+  const past = items.filter((item) => isPastEvent(item.date, now)).reverse();
+  return [...upcoming, ...past];
+}
