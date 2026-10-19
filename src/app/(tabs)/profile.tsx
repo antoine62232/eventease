@@ -1,16 +1,19 @@
 // src/app/(tabs)/profile.tsx
-import { Link } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
+import { Button } from "@/components/ui/Button";
 import { theme } from "@/constants/theme";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ProfileScreen() {
+  const { user, signOut } = useAuth();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profil</Text>
-      {/* Lien temporaire : la redirection automatique arrive à l'étape 1.9 */}
-      <Link href="/login" style={styles.link}>
-        Aller à la connexion
-      </Link>
+      {/* user ne peut pas être null ici : l'écran est protégé par le guard. */}
+      <Text style={styles.name}>{user?.name}</Text>
+      <Text style={styles.email}>{user?.email}</Text>
+      {/* Aucune navigation manuelle : signOut met user à null, le guard redirige. */}
+      <Button title="Se déconnecter" variant="danger" onPress={signOut} />
     </View>
   );
 }
@@ -19,10 +22,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    padding: theme.spacing.lg,
     gap: theme.spacing.md,
     backgroundColor: theme.colors.background,
   },
-  title: { fontSize: theme.fontSize.xl, fontWeight: "700", color: theme.colors.text },
-  link: { fontSize: theme.fontSize.md, color: theme.colors.primary },
+  name: { fontSize: theme.fontSize.xl, fontWeight: "700", color: theme.colors.text, textAlign: "center" },
+  email: { fontSize: theme.fontSize.md, color: theme.colors.textMuted, textAlign: "center" },
 });
