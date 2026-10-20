@@ -65,9 +65,10 @@ const styles = StyleSheet.create({
   day: { fontFamily: theme.fonts.body, fontSize: 15, color: theme.colors.text },
   dayBold: { fontFamily: theme.fonts.bodyBold },
   dayOther: { color: theme.colors.border },
+  // Sous la case, pour ne pas chevaucher le cercle quand aujourd'hui est aussi le jour sélectionné.
   today: {
     position: "absolute",
-    bottom: -4,
+    bottom: -12,
     fontFamily: theme.fonts.hand,
     fontSize: 15,
     color: theme.colors.primary,

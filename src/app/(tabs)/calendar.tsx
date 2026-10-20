@@ -15,6 +15,10 @@ import { formatDay, toLocalDayKey } from "@/utils/dates";
 import { paperDecor } from "@/utils/paper";
 import { isUserParticipating } from "@/utils/participation";
 
+// Bug connu d'Android : une police penchée comme Caveat déborde de la largeur que le texte a mesurée,
+// et la dernière lettre est rognée, marge ou pas. Une espace insécable en fin de texte lui laisse la place.
+const HAND_TEXT_END = "\u00A0";
+
 export default function CalendarScreen() {
   const { user } = useAuth();
   const { events } = useEvents();
@@ -46,21 +50,23 @@ export default function CalendarScreen() {
                 // dateString : le jour touché, déjà au format "YYYY-MM-DD".
                 onDayPress={(day: DateData) => setSelectedDay(day.dateString)}
                 dayComponent={CalendarDay} // nos propres cases : marqueur, cercle au stylo
+                // Titre du mois rendu par nous. date est un objet XDate (la librairie de dates de
+                // react-native-calendars), déjà en français. Espace insécable final : voir HAND_TEXT_END.
+                renderHeader={(date) => (
+                  <Text style={styles.monthTitle}>{`${date?.toString("MMMM yyyy") ?? ""}${HAND_TEXT_END}`}</Text>
+                )}
                 firstDay={1} // semaine qui commence le lundi, comme en France
                 enableSwipeMonths
                 theme={{
                   calendarBackground: "transparent",
                   arrowColor: theme.colors.primary,
-                  monthTextColor: theme.colors.text,
-                  textMonthFontFamily: theme.fonts.hand,
-                  textMonthFontSize: 30,
                   textSectionTitleColor: theme.colors.textMuted,
                   textDayHeaderFontFamily: theme.fonts.hand,
                   textDayHeaderFontSize: 18,
                 }}
               />
             </Card>
-            <Text style={styles.dayTitle}>{selectedTitle}, au programme :</Text>
+            <Text style={styles.dayTitle}>{selectedTitle} :</Text>
           </View>
         }
         renderItem={({ item, index }) => (
@@ -83,6 +89,7 @@ const styles = StyleSheet.create({
   content: { padding: theme.spacing.lg, paddingTop: theme.spacing.xl, gap: theme.spacing.xl },
   header: { gap: theme.spacing.lg },
   calendarCard: { paddingHorizontal: theme.spacing.xs },
+  monthTitle: { fontFamily: theme.fonts.hand, fontSize: 30, color: theme.colors.text },
   dayTitle: { fontFamily: theme.fonts.hand, fontSize: 26, color: theme.colors.text },
   empty: { fontFamily: theme.fonts.hand, fontSize: 22, color: theme.colors.textMuted, textAlign: "center" },
 });
