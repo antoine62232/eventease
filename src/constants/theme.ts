@@ -14,7 +14,8 @@ const colors = {
   highlighterText: "#2B2405", // texte posé sur le jaune
   tapePink: "rgba(255, 150, 180, 0.7)", // rubans adhésifs, semi-transparents
   tapeMint: "rgba(140, 220, 190, 0.75)",
-  pastCard: "#F1F2F5", // fiche d'un événement passé
+  tapeGray: "rgba(70, 78, 100, 0.55)", // ruban des fiches d'événements passés
+  pastCard: "#E2E5EC", // fiche d'un événement passé : nettement plus sombre que le blanc des fiches à venir
 } as const;
 
 // Avec une police personnalisée, fontWeight ne choisit pas la graisse sur Android :

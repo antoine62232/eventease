@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import { buildMarkedDates, eventsOnDay } from "@/utils/calendar";
 import { formatDay, toLocalDayKey } from "@/utils/dates";
+import { paperDecor } from "@/utils/paper";
 import { isUserParticipating } from "@/utils/participation";
 
 export default function CalendarScreen() {
@@ -53,8 +54,9 @@ export default function CalendarScreen() {
           <Text style={styles.dayTitle}>{selectedTitle}</Text>
         </View>
       }
-      renderItem={({ item }) => (
+      renderItem={({ item, index }) => (
         <EventCard
+          {...paperDecor(index)}
           event={item}
           isParticipating={isUserParticipating(item, user?.id)}
           onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
