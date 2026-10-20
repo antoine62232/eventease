@@ -22,7 +22,7 @@ export function WeatherCard({ location, date }: WeatherCardProps) {
       {weather.status === "loading" && <ActivityIndicator color={theme.colors.primary} />}
 
       {weather.status === "unavailable" && (
-        <Text style={styles.muted}>Prévisions disponibles dans les 5 jours qui précèdent l'événement.</Text>
+        <Text style={styles.muted}>Prévisions disponibles dans les 5 jours qui précèdent l’événement.</Text>
       )}
 
       {weather.status === "error" && <Text style={styles.muted}>{weather.message}</Text>}

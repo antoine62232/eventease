@@ -6,6 +6,7 @@ import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import { orderForDisplay } from "@/utils/dates";
+import { isUserParticipating } from "@/utils/participation";
 
 export default function EventsScreen() {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ export default function EventsScreen() {
       renderItem={({ item }) => (
         <EventCard
           event={item}
-          isParticipating={user !== null && item.participantIds.includes(user.id)}
+          isParticipating={isUserParticipating(item, user?.id)}
           onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
         />
       )}

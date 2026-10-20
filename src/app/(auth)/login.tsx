@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
+import { getErrorMessage } from "@/utils/errors";
 import { hasErrors, validateEmail } from "@/utils/validation";
 
 type LoginErrors = {
@@ -36,7 +37,7 @@ export default function LoginScreen() {
     try {
       await signIn(email, password);
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Une erreur est survenue.");
+      setSubmitError(getErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -72,7 +73,7 @@ export default function LoginScreen() {
         <Button title="Se connecter" onPress={handleSubmit} loading={isSubmitting} />
 
         <Link href="/register" style={styles.link}>
-          Pas encore de compte ? S'inscrire
+          Pas encore de compte ? S’inscrire
         </Link>
       </ScrollView>
     </KeyboardAvoidingView>
