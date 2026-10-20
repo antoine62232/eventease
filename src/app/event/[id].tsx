@@ -7,7 +7,9 @@ import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import { formatEventDate, isPastEvent } from "@/utils/dates";
+import { DistanceInfo } from "@/components/events/DistanceInfo";
 import { ParticipationToggle } from "@/components/events/ParticipationToggle";
+import { WeatherCard } from "@/components/events/WeatherCard";
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -75,7 +77,12 @@ export default function EventDetailScreen() {
       <Text style={styles.title}>{event.title}</Text>
       <Text style={styles.date}>{formatEventDate(event.date)}</Text>
 
-      {event.location !== null && <Text style={styles.location}>{event.location.label}</Text>}
+      {event.location !== null && (
+        <>
+          <Text style={styles.location}>{event.location.label}</Text>
+          <DistanceInfo location={event.location} />
+        </>
+      )}
 
       {isPast && <Text style={styles.meta}>Cet événement est passé.</Text>}
 
@@ -90,6 +97,9 @@ export default function EventDetailScreen() {
           {event.description !== "" ? event.description : "Aucune description."}
         </Text>
       </View>
+
+      {/* Météo : seulement s'il y a un lieu, et pas pour un événement passé (l'API ne donne que des prévisions). */}
+      {event.location !== null && !isPast && <WeatherCard location={event.location} date={event.date} />}
 
       {/* Participation : ouverte à tout membre connecté, créateur compris. */}
       <View style={styles.actions}>
