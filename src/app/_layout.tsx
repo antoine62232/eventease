@@ -1,9 +1,13 @@
 import { Stack } from "expo-router";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { theme } from "@/constants/theme";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 import { AuthProvider } from "@/context/AuthContext";
-import { useAuth } from "@/hooks/useAuth";
 import { EventsProvider } from "@/context/EventsContext";
+import { useAuth } from "@/hooks/useAuth";
+
+// Au niveau du module, sans await (recommandation de la doc) : le splash natif reste affiché
+// jusqu'à notre appel à hide(), au lieu de disparaître dès le premier rendu.
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   // L'ordre compte : EventsProvider appelle useAuth(), il doit donc être DANS AuthProvider.
@@ -21,14 +25,17 @@ export default function RootLayout() {
 function RootNavigator() {
   const { user, isLoading } = useAuth();
 
+  // Session lue : on cache le splash. L'utilisateur passe directement du splash au bon écran.
+  useEffect(() => {
+    if (!isLoading) {
+      SplashScreen.hide();
+    }
+  }, [isLoading]);
+
   // Tant que la session n'est pas lue, on ne sait pas quels écrans autoriser.
-  // Sans ce test, l'écran de connexion clignoterait au lancement pour un utilisateur déjà connecté.
+  // Le splash est encore affiché par-dessus : inutile de rendre quoi que ce soit.
   if (isLoading) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
+    return null;
   }
 
   const isLoggedIn = user !== null;
@@ -49,12 +56,3 @@ function RootNavigator() {
     </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: theme.colors.background,
-  },
-});

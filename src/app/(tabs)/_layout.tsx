@@ -1,9 +1,9 @@
-// src/app/(tabs)/_layout.tsx
 import { Link, Tabs } from "expo-router";
 import { StyleSheet } from "react-native";
 import { theme } from "@/constants/theme";
+import { TabIcon } from "@/components/ui/TabIcon";
 
-// Barre d'onglets en bas de l'écran. Les icônes viendront au jour 3.
+// Barre d'onglets en bas de l'écran, avec une icône native par onglet.
 export default function TabsLayout() {
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: theme.colors.primary }}>
@@ -11,6 +11,9 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Événements",
+          tabBarIcon: ({ color, size }) => (
+            <TabIcon name={{ ios: "calendar", android: "calendar_month" }} color={color} size={size} />
+          ),
           // Action principale de l'écran, toujours accessible même quand la liste est longue.
           headerRight: () => (
             <Link href="/event/form" style={styles.headerAction}>
@@ -19,7 +22,15 @@ export default function TabsLayout() {
           ),
         }}
       />
-      <Tabs.Screen name="profile" options={{ title: "Profil" }} />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profil",
+          tabBarIcon: ({ color, size }) => (
+            <TabIcon name={{ ios: "person", android: "person" }} color={color} size={size} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
