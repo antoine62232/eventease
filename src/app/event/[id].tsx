@@ -89,6 +89,15 @@ export default function EventDetailScreen() {
         </Text>
       </View>
 
+      {/* Participation : ouverte à tout membre connecté, créateur compris. */}
+      <View style={styles.actions}>
+        <ParticipationToggle
+          isParticipating={isParticipating}
+          isPast={isPast}
+          onToggle={handleToggleParticipation}
+        />
+      </View>
+
       {/* Actions réservées au créateur. Le service refuse de toute façon les autres. */}
       {isOwner && (
         <View style={styles.actions}>
@@ -98,11 +107,6 @@ export default function EventDetailScreen() {
             onPress={() => router.push({ pathname: "/event/form", params: { id: event.id } })}
           />
           <Button title="Supprimer" variant="danger" onPress={confirmDelete} loading={isDeleting} />
-          <ParticipationToggle
-            isParticipating={isParticipating}
-            isPast={isPast}
-            onToggle={handleToggleParticipation}
-          />
         </View>
       )}
     </ScrollView>
