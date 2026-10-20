@@ -1,13 +1,13 @@
-// src/components/events/EventForm.tsx
 import DateTimePicker, { type DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { useGeocoding } from "@/hooks/useGeocoding";
 import { theme } from "@/constants/theme";
+import { useGeocoding } from "@/hooks/useGeocoding";
 import type { EventInput, EventLocation } from "@/types/event";
 import { formatDay, formatTime, withDatePart, withTimePart } from "@/utils/dates";
+import { getErrorMessage } from "@/utils/errors";
 import {
   EVENT_DESCRIPTION_MAX_LENGTH,
   EVENT_LOCATION_MAX_LENGTH,
@@ -21,7 +21,7 @@ import {
 type EventFormProps = {
   initialValues: EventInput; // lues au premier rendu uniquement (voir le piège de useState)
   submitLabel: string;
-  allowPastDate: boolean; // false à la création, true à la modification
+  allowPastDate: boolean; // true seulement pour modifier un événement déjà passé
   onSubmit: (input: EventInput) => Promise<void>; // l'écran décide : créer ou modifier
 };
 
@@ -79,7 +79,7 @@ export function EventForm({ initialValues, submitLabel, allowPastDate, onSubmit 
       try {
         location = await geocode(query);
       } catch (error) {
-        setErrors({ ...nextErrors, location: error instanceof Error ? error.message : "Lieu introuvable." });
+        setErrors({ ...nextErrors, location: getErrorMessage(error, "Lieu introuvable.") });
         return; // on n'enregistre pas un lieu qu'on n'a pas pu vérifier
       }
     }
@@ -88,7 +88,7 @@ export function EventForm({ initialValues, submitLabel, allowPastDate, onSubmit 
     try {
       await onSubmit({ title, description, date: isoDate, location });
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Une erreur est survenue.");
+      setSubmitError(getErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }

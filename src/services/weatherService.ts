@@ -1,4 +1,3 @@
-// src/services/weatherService.ts
 import { OPENWEATHER_API_KEY, OPENWEATHER_BASE_URL } from "@/constants/config";
 import type { Forecast } from "@/types/weather";
 import { findClosestSlotIndex } from "@/utils/weather";

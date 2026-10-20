@@ -1,4 +1,3 @@
-// src/services/locationService.ts
 import * as Location from "expo-location";
 import type { Coordinates } from "@/utils/distance";
 

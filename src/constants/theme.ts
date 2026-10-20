@@ -18,5 +18,3 @@ const radius = { sm: 6, md: 12, lg: 20 } as const;
 const fontSize = { sm: 13, md: 16, lg: 20, xl: 28 } as const;
 
 export const theme = { colors, spacing, radius, fontSize } as const;
-
-export type Theme = typeof theme;

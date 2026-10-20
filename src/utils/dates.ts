@@ -1,5 +1,3 @@
-// src/utils/dates.ts
-
 // Formateurs créés une seule fois : les recréer à chaque appel coûterait inutilement.
 const DAY_FORMATTER = new Intl.DateTimeFormat("fr-FR", {
   weekday: "long",

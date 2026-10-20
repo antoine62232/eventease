@@ -1,4 +1,3 @@
-// src/hooks/useUserLocation.ts
 import { useEffect, useState } from "react";
 import { getUserPosition, LocationPermissionError } from "@/services/locationService";
 import type { Coordinates } from "@/utils/distance";

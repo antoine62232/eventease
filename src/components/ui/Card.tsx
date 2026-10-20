@@ -1,4 +1,3 @@
-// src/components/ui/Card.tsx
 import type { ReactNode } from "react";
 import { Pressable, type StyleProp, StyleSheet, type ViewStyle } from "react-native";
 import { theme } from "@/constants/theme";

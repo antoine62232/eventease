@@ -1,5 +1,3 @@
-// src/utils/distance.ts
-
 export type Coordinates = {
   latitude: number;
   longitude: number;

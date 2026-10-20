@@ -1,4 +1,3 @@
-// src/app/(tabs)/calendar.tsx
 import "@/constants/calendarLocale"; // import pour son effet : traduit le calendrier en français
 import { router } from "expo-router";
 import { useState } from "react";
@@ -10,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import { buildMarkedDates, eventsOnDay } from "@/utils/calendar";
 import { formatDay, toLocalDayKey } from "@/utils/dates";
+import { isUserParticipating } from "@/utils/participation";
 
 export default function CalendarScreen() {
   const { user } = useAuth();
@@ -56,7 +56,7 @@ export default function CalendarScreen() {
       renderItem={({ item }) => (
         <EventCard
           event={item}
-          isParticipating={user !== null && item.participantIds.includes(user.id)}
+          isParticipating={isUserParticipating(item, user?.id)}
           onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
         />
       )}

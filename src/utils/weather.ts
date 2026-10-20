@@ -1,5 +1,3 @@
-// src/utils/weather.ts
-
 // L'API gratuite donne une prévision toutes les 3 heures, sur 5 jours.
 export const FORECAST_STEP_MS = 3 * 60 * 60 * 1000;
 

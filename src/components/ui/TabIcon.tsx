@@ -1,4 +1,3 @@
-// src/components/ui/TabIcon.tsx
 import { SymbolView, type SymbolViewProps } from "expo-symbols";
 import type { ColorValue } from "react-native";
 

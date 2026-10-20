@@ -1,5 +1,3 @@
-// src/types/event.ts
-
 /** Lieu d'un événement : le nom affiché et ses coordonnées (pour la météo et la distance). */
 export type EventLocation = {
   label: string; // ex : "Béthune, FR"

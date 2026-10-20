@@ -1,4 +1,3 @@
-// src/hooks/useGeocoding.ts
 import { useState } from "react";
 import { geocodeCity } from "@/services/geocodingService";
 import type { EventLocation } from "@/types/event";

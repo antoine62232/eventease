@@ -1,6 +1,7 @@
 import { STORAGE_KEYS } from "@/constants/storageKeys";
 import type { AppEvent, EventInput } from "@/types/event";
 import { generateId } from "@/utils/id";
+import { isUserParticipating } from "@/utils/participation";
 import { readJson, writeJson } from "./storage";
 
 // Toutes les opérations suivent le même schéma : lire la liste, produire une copie modifiée, réécrire.
@@ -87,7 +88,7 @@ export async function toggleParticipation(id: string, userId: string): Promise<A
   const events = await getEvents();
   const existing = findEventOrThrow(events, id);
 
-  const isParticipating = existing.participantIds.includes(userId);
+  const isParticipating = isUserParticipating(existing, userId);
   const participantIds = isParticipating
     ? existing.participantIds.filter((participantId) => participantId !== userId)
     : [...existing.participantIds, userId];

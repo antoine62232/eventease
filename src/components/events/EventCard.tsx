@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/Card";
 import { theme } from "@/constants/theme";
 import type { AppEvent } from "@/types/event";
 import { formatEventDate, isPastEvent } from "@/utils/dates";
+import { formatParticipantCount } from "@/utils/participation";
 
 type EventCardProps = {
   event: AppEvent;
@@ -12,7 +13,6 @@ type EventCardProps = {
 
 export function EventCard({ event, isParticipating, onPress }: EventCardProps) {
   const isPast = isPastEvent(event.date);
-  const participantCount = event.participantIds.length;
 
   return (
     <Card onPress={onPress} style={isPast && styles.past}>
@@ -34,7 +34,7 @@ export function EventCard({ event, isParticipating, onPress }: EventCardProps) {
 
       <Text style={styles.meta}>
         {event.location !== null ? `${event.location.label} · ` : ""}
-        {participantCount} participant{participantCount > 1 ? "s" : ""}
+        {formatParticipantCount(event.participantIds.length)}
         {isPast ? " · Passé" : ""}
       </Text>
     </Card>

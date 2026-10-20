@@ -4,7 +4,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import type { EventInput } from "@/types/event";
-import { defaultEventDate } from "@/utils/dates";
+import { defaultEventDate, isPastEvent } from "@/utils/dates";
 
 export default function EventFormScreen() {
   // id absent = création, id présent = modification.
@@ -69,7 +69,9 @@ export default function EventFormScreen() {
       <EventForm
         initialValues={initialValues}
         submitLabel={isEditMode ? "Enregistrer" : "Créer l'événement"}
-        allowPastDate={isEditMode}
+        // Date passée autorisée uniquement pour un événement déjà passé (corriger une coquille, par exemple).
+        // Un événement à venir ne peut pas être déplacé dans le passé.
+        allowPastDate={event !== undefined && isPastEvent(event.date)}
         onSubmit={handleSubmit}
       />
     </>

@@ -1,15 +1,17 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { DistanceInfo } from "@/components/events/DistanceInfo";
+import { ParticipationToggle } from "@/components/events/ParticipationToggle";
+import { WeatherCard } from "@/components/events/WeatherCard";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import { formatEventDate, isPastEvent } from "@/utils/dates";
-import { DistanceInfo } from "@/components/events/DistanceInfo";
-import { ParticipationToggle } from "@/components/events/ParticipationToggle";
-import { WeatherCard } from "@/components/events/WeatherCard";
+import { getErrorMessage } from "@/utils/errors";
+import { formatParticipantCount, isUserParticipating } from "@/utils/participation";
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -36,15 +38,13 @@ export default function EventDetailScreen() {
 
   const isOwner = user !== null && event.createdBy === user.id;
   const isPast = isPastEvent(event.date);
-  const participantCount = event.participantIds.length;
-  // L'utilisateur est-il dans la liste des participants de cet événement ?
-  const isParticipating = user !== null && event.participantIds.includes(user.id);
+  const isParticipating = isUserParticipating(event, user?.id);
 
   const handleToggleParticipation = async () => {
     try {
       await toggleParticipation(event.id);
     } catch (error) {
-      Alert.alert("Participation impossible", error instanceof Error ? error.message : "Une erreur est survenue.");
+      Alert.alert("Participation impossible", getErrorMessage(error));
     }
   };
 
@@ -55,7 +55,7 @@ export default function EventDetailScreen() {
       router.back();
     } catch (error) {
       setIsDeleting(false);
-      Alert.alert("Suppression impossible", error instanceof Error ? error.message : "Une erreur est survenue.");
+      Alert.alert("Suppression impossible", getErrorMessage(error));
     }
   };
 
@@ -87,7 +87,7 @@ export default function EventDetailScreen() {
       {isPast && <Text style={styles.meta}>Cet événement est passé.</Text>}
 
       <Text style={styles.meta}>
-        {participantCount} participant{participantCount > 1 ? "s" : ""}
+        {formatParticipantCount(event.participantIds.length)}
         {isOwner ? " · Tu es l'organisateur" : ""}
       </Text>
 

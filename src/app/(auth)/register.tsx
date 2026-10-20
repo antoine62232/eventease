@@ -1,4 +1,3 @@
-// src/app/(auth)/register.tsx
 import { Link } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, ScrollView, StyleSheet, Text } from "react-native";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
+import { getErrorMessage } from "@/utils/errors";
 import {
   hasErrors,
   validateEmail,
@@ -47,7 +47,7 @@ export default function RegisterScreen() {
       // En cas de succès, la session est ouverte et le guard redirige vers les onglets.
       await signUp({ name, email, password });
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Une erreur est survenue.");
+      setSubmitError(getErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
