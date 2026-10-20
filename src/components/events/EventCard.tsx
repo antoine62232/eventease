@@ -21,7 +21,7 @@ export function EventCard({ event, isParticipating, onPress }: EventCardProps) {
         <Text style={styles.title} numberOfLines={1}>
           {event.title}
         </Text>
-        {isParticipating && <Text style={styles.badge}>Je participe</Text>}
+        {isParticipating && <Text style={styles.badge}>{isPast ? "J'ai participé" : "Je participe"}</Text>}
       </View>
 
       <Text style={styles.date}>{formatEventDate(event.date)}</Text>
