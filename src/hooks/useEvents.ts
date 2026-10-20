@@ -1,4 +1,3 @@
-// src/hooks/useEvents.ts
 import { useContext } from "react";
 import { EventsContext, type EventsContextValue } from "@/context/EventsContext";
 

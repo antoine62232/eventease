@@ -7,11 +7,12 @@ import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import { formatEventDate, isPastEvent } from "@/utils/dates";
+import { ParticipationToggle } from "@/components/events/ParticipationToggle";
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
-  const { events, removeEvent } = useEvents();
+  const { events, removeEvent, toggleParticipation } = useEvents();
   const [isDeleting, setIsDeleting] = useState(false);
 
   // L'événement vient du Context : s'il est modifié ailleurs, cet écran se met à jour seul.
@@ -34,6 +35,16 @@ export default function EventDetailScreen() {
   const isOwner = user !== null && event.createdBy === user.id;
   const isPast = isPastEvent(event.date);
   const participantCount = event.participantIds.length;
+  // L'utilisateur est-il dans la liste des participants de cet événement ?
+  const isParticipating = user !== null && event.participantIds.includes(user.id);
+
+  const handleToggleParticipation = async () => {
+    try {
+      await toggleParticipation(event.id);
+    } catch (error) {
+      Alert.alert("Participation impossible", error instanceof Error ? error.message : "Une erreur est survenue.");
+    }
+  };
 
   const deleteEvent = async () => {
     setIsDeleting(true);
@@ -87,6 +98,11 @@ export default function EventDetailScreen() {
             onPress={() => router.push({ pathname: "/event/form", params: { id: event.id } })}
           />
           <Button title="Supprimer" variant="danger" onPress={confirmDelete} loading={isDeleting} />
+          <ParticipationToggle
+            isParticipating={isParticipating}
+            isPast={isPast}
+            onToggle={handleToggleParticipation}
+          />
         </View>
       )}
     </ScrollView>
