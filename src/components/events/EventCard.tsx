@@ -33,6 +33,7 @@ export function EventCard({ event, isParticipating, onPress }: EventCardProps) {
       )}
 
       <Text style={styles.meta}>
+        {event.location !== null ? `${event.location.label} · ` : ""}
         {participantCount} participant{participantCount > 1 ? "s" : ""}
         {isPast ? " · Passé" : ""}
       </Text>

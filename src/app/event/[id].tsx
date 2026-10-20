@@ -75,6 +75,8 @@ export default function EventDetailScreen() {
       <Text style={styles.title}>{event.title}</Text>
       <Text style={styles.date}>{formatEventDate(event.date)}</Text>
 
+      {event.location !== null && <Text style={styles.location}>{event.location.label}</Text>}
+
       {isPast && <Text style={styles.meta}>Cet événement est passé.</Text>}
 
       <Text style={styles.meta}>
@@ -119,6 +121,7 @@ const styles = StyleSheet.create({
   title: { fontSize: theme.fontSize.xl, fontWeight: "700", color: theme.colors.text },
   date: { fontSize: theme.fontSize.md, fontWeight: "600", color: theme.colors.primary },
   meta: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted },
+  location: { fontSize: theme.fontSize.md, color: theme.colors.text },
   section: { marginTop: theme.spacing.md, gap: theme.spacing.xs },
   sectionTitle: { fontSize: theme.fontSize.sm, fontWeight: "700", color: theme.colors.text },
   description: { fontSize: theme.fontSize.md, color: theme.colors.text, lineHeight: 22 },

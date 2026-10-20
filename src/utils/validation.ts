@@ -67,3 +67,5 @@ export function validateFutureDate(isoDate: string, now: Date = new Date()): str
   if (isPastEvent(isoDate, now)) return "La date doit être dans le futur.";
   return undefined;
 }
+
+export const EVENT_LOCATION_MAX_LENGTH = 100;
