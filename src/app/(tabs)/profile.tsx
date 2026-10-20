@@ -22,13 +22,15 @@ export default function ProfileScreen() {
       title: "Atelier photo",
       description: "Initiation à la photo de rue. Apporter son appareil ou son téléphone.",
       date: inDays(3, 14),
+      location: { label: "Béthune, FR", latitude: 50.5303, longitude: 2.6408 },
     });
     await addEvent({
       title: "Conférence climat",
       description: "Intervention d'un chercheur, suivie d'un échange avec le public.",
       date: inDays(10, 18),
+      location: { label: "Lille, FR", latitude: 50.6365, longitude: 3.0635 },
     });
-    await addEvent({ title: "Sortie randonnée", description: "", date: inDays(-5, 9) });
+    await addEvent({ title: "Sortie randonnée", description: "", date: inDays(-5, 9), location: null });
     Alert.alert("Données de test", "3 événements créés.");
   };
 

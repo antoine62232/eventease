@@ -1,14 +1,16 @@
 // src/components/events/EventForm.tsx
-import DateTimePicker, { type DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import DateTimePicker, { type DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { useGeocoding } from "@/hooks/useGeocoding";
 import { theme } from "@/constants/theme";
-import type { EventInput } from "@/types/event";
+import type { EventInput, EventLocation } from "@/types/event";
 import { formatDay, formatTime, withDatePart, withTimePart } from "@/utils/dates";
 import {
   EVENT_DESCRIPTION_MAX_LENGTH,
+  EVENT_LOCATION_MAX_LENGTH,
   EVENT_TITLE_MAX_LENGTH,
   hasErrors,
   validateEventDescription,
@@ -27,6 +29,7 @@ type EventFormErrors = {
   title?: string;
   description?: string;
   date?: string;
+  location?: string;
 };
 
 type PickerMode = "date" | "time";
@@ -34,6 +37,9 @@ type PickerMode = "date" | "time";
 export function EventForm({ initialValues, submitLabel, allowPastDate, onSubmit }: EventFormProps) {
   const [title, setTitle] = useState(initialValues.title);
   const [description, setDescription] = useState(initialValues.description);
+  // Ce que l'utilisateur tape. Le lieu géocodé n'est calculé qu'à l'envoi.
+  const [locationQuery, setLocationQuery] = useState(initialValues.location?.label ?? "");
+  const { geocode, isGeocoding } = useGeocoding();
   // Le sélecteur travaille avec un objet Date : on convertit l'ISO une fois, au départ.
   const [date, setDate] = useState(() => new Date(initialValues.date));
   const [pickerMode, setPickerMode] = useState<PickerMode | null>(null); // null = sélecteur fermé
@@ -41,14 +47,17 @@ export function EventForm({ initialValues, submitLabel, allowPastDate, onSubmit 
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handlePickerChange = (event: DateTimePickerEvent, picked?: Date) => {
+  // Choix validé. Android : le dialogue se ferme après chaque choix, on démonte le composant.
+  const handlePickerValueChange = (_event: DateTimePickerChangeEvent, picked: Date) => {
     const mode = pickerMode;
-    setPickerMode(null); // Android : le dialogue se ferme après chaque choix, on démonte le composant
-    // "dismissed" = l'utilisateur a annulé : on ne change rien.
-    if (event.type !== "set" || picked === undefined || mode === null) return;
+    setPickerMode(null);
+    if (mode === null) return;
     // On ne remplace que la partie choisie : le jour OU l'heure.
     setDate((current) => (mode === "date" ? withDatePart(current, picked) : withTimePart(current, picked)));
   };
+
+  // Annulation : on ferme simplement, sans rien changer.
+  const handlePickerDismiss = () => setPickerMode(null);
 
   const handleSubmit = async () => {
     const isoDate = date.toISOString();
@@ -61,9 +70,23 @@ export function EventForm({ initialValues, submitLabel, allowPastDate, onSubmit 
     setSubmitError(null);
     if (hasErrors(nextErrors)) return; // nextErrors, pas errors : errors n'est pas encore à jour
 
+    // Le lieu : champ vide = pas de lieu ; texte inchangé = on garde le lieu déjà connu, sans appel réseau.
+    let location: EventLocation | null = null;
+    const query = locationQuery.trim();
+    if (query !== "" && query === initialValues.location?.label) {
+      location = initialValues.location;
+    } else if (query !== "") {
+      try {
+        location = await geocode(query);
+      } catch (error) {
+        setErrors({ ...nextErrors, location: error instanceof Error ? error.message : "Lieu introuvable." });
+        return; // on n'enregistre pas un lieu qu'on n'a pas pu vérifier
+      }
+    }
+
     setIsSubmitting(true);
     try {
-      await onSubmit({ title, description, date: isoDate });
+      await onSubmit({ title, description, date: isoDate, location });
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Une erreur est survenue.");
     } finally {
@@ -96,6 +119,16 @@ export function EventForm({ initialValues, submitLabel, allowPastDate, onSubmit 
           style={styles.descriptionInput}
         />
 
+        <Input
+          label="Lieu (facultatif)"
+          value={locationQuery}
+          onChangeText={setLocationQuery}
+          error={errors.location}
+          maxLength={EVENT_LOCATION_MAX_LENGTH}
+          placeholder="Ville : Béthune, Lille..."
+          autoCorrect={false}
+        />
+
         <View style={styles.dateBlock}>
           <Text style={styles.label}>Date et heure</Text>
           <View style={styles.dateRow}>
@@ -114,13 +147,14 @@ export function EventForm({ initialValues, submitLabel, allowPastDate, onSubmit 
             mode={pickerMode}
             is24Hour
             minimumDate={allowPastDate ? undefined : new Date()} // jours passés grisés à la création
-            onChange={handlePickerChange}
+            onValueChange={handlePickerValueChange}
+            onDismiss={handlePickerDismiss}
           />
         )}
 
         {submitError !== null && <Text style={styles.submitError}>{submitError}</Text>}
 
-        <Button title={submitLabel} onPress={handleSubmit} loading={isSubmitting} />
+        <Button title={submitLabel} onPress={handleSubmit} loading={isGeocoding || isSubmitting} />
       </ScrollView>
     </KeyboardAvoidingView>
   );

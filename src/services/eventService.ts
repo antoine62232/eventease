@@ -6,8 +6,11 @@ import { readJson, writeJson } from "./storage";
 // Toutes les opérations suivent le même schéma : lire la liste, produire une copie modifiée, réécrire.
 
 /** Tous les événements stockés ([] au premier lancement). */
-export function getEvents(): Promise<AppEvent[]> {
-  return readJson<AppEvent[]>(STORAGE_KEYS.events, []);
+export async function getEvents(): Promise<AppEvent[]> {
+  const events = await readJson<AppEvent[]>(STORAGE_KEYS.events, []);
+  // Migration : les événements enregistrés avant l'ajout du lieu n'ont pas ce champ.
+  // On le complète à la lecture, pour que le reste de l'app puisse compter sur sa présence.
+  return events.map((event) => ({ ...event, location: event.location ?? null }));
 }
 
 function saveEvents(events: AppEvent[]): Promise<void> {
@@ -39,6 +42,7 @@ export async function createEvent(input: EventInput, userId: string): Promise<Ap
     title: input.title.trim(),
     description: input.description.trim(),
     date: input.date,
+    location: input.location,
     createdBy: userId,
     participantIds: [], // le créateur ne participe pas d'office : il le décide comme les autres
     createdAt: now,
@@ -60,6 +64,7 @@ export async function updateEvent(id: string, input: EventInput, userId: string)
     title: input.title.trim(),
     description: input.description.trim(),
     date: input.date,
+    location: input.location,
     updatedAt: new Date().toISOString(),
   };
 

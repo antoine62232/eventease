@@ -59,8 +59,8 @@ export default function EventFormScreen() {
 
   const initialValues: EventInput =
     event !== undefined
-      ? { title: event.title, description: event.description, date: event.date }
-      : { title: "", description: "", date: defaultEventDate() };
+      ? { title: event.title, description: event.description, date: event.date, location: event.location }
+      : { title: "", description: "", date: defaultEventDate(), location: null };
 
   return (
     <>
