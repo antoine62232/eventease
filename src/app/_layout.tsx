@@ -3,12 +3,15 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { theme } from "@/constants/theme";
 import { AuthProvider } from "@/context/AuthContext";
 import { useAuth } from "@/hooks/useAuth";
+import { EventsProvider } from "@/context/EventsContext";
 
 export default function RootLayout() {
-  // Le Provider enveloppe toute l'app : tous les écrans peuvent appeler useAuth().
+  // L'ordre compte : EventsProvider appelle useAuth(), il doit donc être DANS AuthProvider.
   return (
     <AuthProvider>
-      <RootNavigator />
+      <EventsProvider>
+        <RootNavigator />
+      </EventsProvider>
     </AuthProvider>
   );
 }
