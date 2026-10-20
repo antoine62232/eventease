@@ -37,7 +37,8 @@
         {
           "locationWhenInUsePermission": "EventEase utilise ta position pour afficher la distance jusqu'au lieu d'un événement."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

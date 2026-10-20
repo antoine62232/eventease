@@ -1,6 +1,15 @@
+import { Caveat_500Medium, Caveat_700Bold } from "@expo-google-fonts/caveat";
+import {
+  InterTight_400Regular,
+  InterTight_500Medium,
+  InterTight_600SemiBold,
+  InterTight_700Bold,
+} from "@expo-google-fonts/inter-tight";
+import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { theme } from "@/constants/theme";
 import { AuthProvider } from "@/context/AuthContext";
 import { EventsProvider } from "@/context/EventsContext";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,6 +19,21 @@ import { useAuth } from "@/hooks/useAuth";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  // Chargement des polices pendant le splash. Chaque clé devient un nom de famille utilisable dans fontFamily.
+  const [fontsLoaded, fontError] = useFonts({
+    Caveat_500Medium,
+    Caveat_700Bold,
+    InterTight_400Regular,
+    InterTight_500Medium,
+    InterTight_600SemiBold,
+    InterTight_700Bold,
+  });
+
+  // Splash encore affiché : on attend les polices. En cas d'erreur, l'app démarre avec la police système.
+  if (!fontsLoaded && fontError === null) {
+    return null;
+  }
+
   // L'ordre compte : EventsProvider appelle useAuth(), il doit donc être DANS AuthProvider.
   return (
     <AuthProvider>
@@ -41,7 +65,16 @@ function RootNavigator() {
   const isLoggedIn = user !== null;
 
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        // En-tête façon carnet : fond papier, titre manuscrit à l'encre, pas d'ombre.
+        headerStyle: { backgroundColor: theme.colors.background },
+        headerTintColor: theme.colors.primary,
+        headerTitleStyle: { fontFamily: theme.fonts.hand, fontSize: theme.fontSize.handLg - 6 },
+        headerShadowVisible: false,
+        contentStyle: { backgroundColor: theme.colors.background },
+      }}
+    >
       {/* Écrans réservés aux utilisateurs connectés */}
       <Stack.Protected guard={isLoggedIn}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

@@ -1,12 +1,38 @@
 import { Link, Tabs } from "expo-router";
 import { StyleSheet } from "react-native";
-import { theme } from "@/constants/theme";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TabIcon } from "@/components/ui/TabIcon";
+import { theme } from "@/constants/theme";
 
 // Barre d'onglets en bas de l'écran, avec une icône native par onglet.
 export default function TabsLayout() {
+  // Hauteur de la barre de navigation du téléphone (boutons ou barre de geste), différente selon l'appareil.
+  const insets = useSafeAreaInsets();
+
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: theme.colors.primary }}>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textMuted,
+        // Onglet actif surligné au marqueur, comme dans un carnet.
+        tabBarActiveBackgroundColor: theme.colors.highlighter,
+        tabBarItemStyle: { borderRadius: theme.radius.md, marginHorizontal: theme.spacing.sm, marginVertical: 6, overflow: "hidden" },
+        // Caveat a de grandes boucles : sans lineHeight, le bas des lettres est coupé.
+        tabBarLabelStyle: { fontFamily: theme.fonts.hand, fontSize: 18, lineHeight: 22 },
+        // Hauteur fixée nous-mêmes : on rajoute la zone des boutons du téléphone pour ne pas passer dessous.
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.primary,
+          height: 72 + insets.bottom,
+          paddingBottom: insets.bottom,
+        },
+        headerStyle: { backgroundColor: theme.colors.background },
+        headerTintColor: theme.colors.primary,
+        headerTitleStyle: { fontFamily: theme.fonts.hand, fontSize: theme.fontSize.handLg },
+        headerShadowVisible: false,
+        sceneStyle: { backgroundColor: theme.colors.background },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
@@ -47,8 +73,8 @@ export default function TabsLayout() {
 const styles = StyleSheet.create({
   headerAction: {
     marginRight: theme.spacing.md,
-    fontSize: theme.fontSize.md,
-    fontWeight: "600",
+    fontFamily: theme.fonts.hand,
+    fontSize: theme.fontSize.hand,
     color: theme.colors.primary,
   },
 });
