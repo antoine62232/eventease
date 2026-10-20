@@ -37,7 +37,7 @@ export function DistanceInfo({ location }: DistanceInfoProps) {
   return (
     <View>
       <Text style={styles.annotation}>{text}</Text>
-      <Text style={styles.help}>à vol d'oiseau</Text>
+      <Text style={styles.help}>à vol d’oiseau</Text>
     </View>
   );
 }

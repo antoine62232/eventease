@@ -9,6 +9,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { HeaderTitle } from "@/components/ui/HeaderTitle";
 import { theme } from "@/constants/theme";
 import { AuthProvider } from "@/context/AuthContext";
 import { EventsProvider } from "@/context/EventsContext";
@@ -70,7 +71,7 @@ function RootNavigator() {
         // En-tête façon carnet : fond papier, titre manuscrit à l'encre, pas d'ombre.
         headerStyle: { backgroundColor: theme.colors.background },
         headerTintColor: theme.colors.primary,
-        headerTitleStyle: { fontFamily: theme.fonts.hand, fontSize: theme.fontSize.handLg - 6 },
+        headerTitle: ({ children }) => <HeaderTitle size={theme.fontSize.handLg - 6}>{children}</HeaderTitle>,
         headerShadowVisible: false,
         contentStyle: { backgroundColor: theme.colors.background },
       }}

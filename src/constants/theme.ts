@@ -36,3 +36,7 @@ const radius = { sm: 6, md: 12, lg: 20 } as const;
 const fontSize = { sm: 13, md: 16, lg: 20, xl: 28, hand: 24, handLg: 34, handXl: 48 } as const;
 
 export const theme = { colors, fonts, spacing, radius, fontSize } as const;
+
+// Bug connu d'Android : une police penchée comme Caveat déborde de la largeur que le texte a mesurée,
+// et la dernière lettre est rognée, marge ou pas. Une espace insécable en fin de texte lui laisse la place.
+export const HAND_TEXT_END = "\u00A0";

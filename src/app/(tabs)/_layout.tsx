@@ -1,6 +1,7 @@
 import { Link, Tabs } from "expo-router";
 import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HeaderTitle } from "@/components/ui/HeaderTitle";
 import { TabIcon } from "@/components/ui/TabIcon";
 import { theme } from "@/constants/theme";
 
@@ -28,7 +29,7 @@ export default function TabsLayout() {
         },
         headerStyle: { backgroundColor: theme.colors.background },
         headerTintColor: theme.colors.primary,
-        headerTitleStyle: { fontFamily: theme.fonts.hand, fontSize: theme.fontSize.handLg },
+        headerTitle: ({ children }) => <HeaderTitle size={theme.fontSize.handLg}>{children}</HeaderTitle>,
         headerShadowVisible: false,
         sceneStyle: { backgroundColor: theme.colors.background },
       }}

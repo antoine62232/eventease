@@ -7,17 +7,13 @@ import { CalendarDay } from "@/components/events/CalendarDay";
 import { EventCard } from "@/components/events/EventCard";
 import { Card } from "@/components/ui/Card";
 import { PaperBackground } from "@/components/ui/PaperBackground";
-import { theme } from "@/constants/theme";
+import { HAND_TEXT_END, theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import { buildMarkedDates, eventsOnDay } from "@/utils/calendar";
 import { formatDay, toLocalDayKey } from "@/utils/dates";
 import { paperDecor } from "@/utils/paper";
 import { isUserParticipating } from "@/utils/participation";
-
-// Bug connu d'Android : une police penchée comme Caveat déborde de la largeur que le texte a mesurée,
-// et la dernière lettre est rognée, marge ou pas. Une espace insécable en fin de texte lui laisse la place.
-const HAND_TEXT_END = "\u00A0";
 
 export default function CalendarScreen() {
   const { user } = useAuth();
