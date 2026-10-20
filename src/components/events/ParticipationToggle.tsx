@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
+import { Highlight } from "@/components/ui/Highlight";
 import { theme } from "@/constants/theme";
 
 type ParticipationToggleProps = {
@@ -40,7 +41,12 @@ export function ParticipationToggle({ isParticipating, isPast, onToggle }: Parti
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.status, isParticipating && styles.statusActive]}>{statusText}</Text>
+      {/* Participation confirmée : surlignée au marqueur. Sinon, simple note en bleu-gris. */}
+      {isParticipating ? (
+        <Highlight style={styles.statusActive}>{statusText}</Highlight>
+      ) : (
+        <Text style={styles.status}>{statusText}</Text>
+      )}
       <Button
         title={buttonTitle}
         // Action principale si on ne participe pas, secondaire pour l'annuler.
@@ -56,12 +62,6 @@ const styles = StyleSheet.create({
   container: {
     gap: theme.spacing.sm,
   },
-  status: {
-    fontSize: theme.fontSize.md,
-    color: theme.colors.textMuted,
-  },
-  statusActive: {
-    color: theme.colors.success,
-    fontWeight: "600",
-  },
+  status: { fontFamily: theme.fonts.hand, fontSize: theme.fontSize.hand, color: theme.colors.textMuted },
+  statusActive: { fontSize: theme.fontSize.hand },
 });

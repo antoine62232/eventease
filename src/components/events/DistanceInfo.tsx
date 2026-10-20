@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { theme } from "@/constants/theme";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import type { EventLocation } from "@/types/event";
@@ -18,7 +18,7 @@ export function DistanceInfo({ location }: DistanceInfoProps) {
       text = "Calcul de la distance...";
       break;
     case "success":
-      text = `À ${formatDistance(distanceKm(userLocation.coords, location))} de toi (à vol d'oiseau)`;
+      text = `à ${formatDistance(distanceKm(userLocation.coords, location))} de toi`;
       break;
     case "denied":
       text = "Autorise la localisation dans les réglages pour voir la distance.";
@@ -28,9 +28,21 @@ export function DistanceInfo({ location }: DistanceInfoProps) {
       break;
   }
 
-  return <Text style={styles.text}>{text}</Text>;
+  // Les messages d'aide restent en texte droit : ce sont des consignes, elles doivent se lire du premier coup.
+  if (userLocation.status !== "success") {
+    return <Text style={styles.help}>{text}</Text>;
+  }
+
+  // La distance s'écrit "à la main", comme une annotation, avec sa précision en petit dessous.
+  return (
+    <View>
+      <Text style={styles.annotation}>{text}</Text>
+      <Text style={styles.help}>à vol d’oiseau</Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  text: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted },
+  annotation: { fontFamily: theme.fonts.hand, fontSize: 22, color: theme.colors.primary },
+  help: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textMuted },
 });

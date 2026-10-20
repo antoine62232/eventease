@@ -1,14 +1,18 @@
-import "@/constants/calendarLocale"; // import pour son effet : traduit le calendrier en français
+import "@/constants/calendarLocale";
 import { router } from "expo-router";
 import { useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Calendar, type DateData } from "react-native-calendars";
+import { CalendarDay } from "@/components/events/CalendarDay";
 import { EventCard } from "@/components/events/EventCard";
-import { theme } from "@/constants/theme";
+import { Card } from "@/components/ui/Card";
+import { PaperBackground } from "@/components/ui/PaperBackground";
+import { HAND_TEXT_END, theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import { buildMarkedDates, eventsOnDay } from "@/utils/calendar";
 import { formatDay, toLocalDayKey } from "@/utils/dates";
+import { paperDecor } from "@/utils/paper";
 import { isUserParticipating } from "@/utils/participation";
 
 export default function CalendarScreen() {
@@ -26,50 +30,62 @@ export default function CalendarScreen() {
   const selectedTitle = formatDay(new Date(`${selectedDay}T12:00:00`).toISOString());
 
   return (
-    <FlatList
-      style={styles.list}
-      contentContainerStyle={styles.content}
-      data={dayEvents}
-      keyExtractor={(item) => item.id}
-      ListHeaderComponent={
-        <View style={styles.header}>
-          <Calendar
-            current={selectedDay}
-            markedDates={markedDates}
-            // dateString : le jour touché, déjà au format "YYYY-MM-DD".
-            onDayPress={(day: DateData) => setSelectedDay(day.dateString)}
-            firstDay={1} // semaine qui commence le lundi, comme en France
-            enableSwipeMonths
-            theme={{
-              todayTextColor: theme.colors.primary,
-              selectedDotColor: theme.colors.primaryText, // point blanc sur le jour surligné
-              arrowColor: theme.colors.primary,
-              textSectionTitleColor: theme.colors.textMuted,
-              monthTextColor: theme.colors.text,
-              textMonthFontWeight: "700",
-            }}
-            style={styles.calendar}
+    <PaperBackground>
+      <FlatList
+        style={styles.list}
+        contentContainerStyle={styles.content}
+        data={dayEvents}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={
+          <View style={styles.header}>
+            {/* Le calendrier sur une fiche avec ruban, comme une page du carnet. */}
+            <Card tilt={-0.5} tape="mint" style={styles.calendarCard}>
+              <Calendar
+                current={selectedDay}
+                markedDates={markedDates}
+                // dateString : le jour touché, déjà au format "YYYY-MM-DD".
+                onDayPress={(day: DateData) => setSelectedDay(day.dateString)}
+                dayComponent={CalendarDay} // nos propres cases : marqueur, cercle au stylo
+                // Titre du mois rendu par nous. date est un objet XDate (la librairie de dates de
+                // react-native-calendars), déjà en français. Espace insécable final : voir HAND_TEXT_END.
+                renderHeader={(date) => (
+                  <Text style={styles.monthTitle}>{`${date?.toString("MMMM yyyy") ?? ""}${HAND_TEXT_END}`}</Text>
+                )}
+                firstDay={1} // semaine qui commence le lundi, comme en France
+                enableSwipeMonths
+                theme={{
+                  calendarBackground: "transparent",
+                  arrowColor: theme.colors.primary,
+                  textSectionTitleColor: theme.colors.textMuted,
+                  textDayHeaderFontFamily: theme.fonts.hand,
+                  textDayHeaderFontSize: 18,
+                }}
+              />
+            </Card>
+            <Text style={styles.dayTitle}>{selectedTitle} :</Text>
+          </View>
+        }
+        renderItem={({ item, index }) => (
+          <EventCard
+            {...paperDecor(index)}
+            event={item}
+            isParticipating={isUserParticipating(item, user?.id)}
+            onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
           />
-          <Text style={styles.dayTitle}>{selectedTitle}</Text>
-        </View>
-      }
-      renderItem={({ item }) => (
-        <EventCard
-          event={item}
-          isParticipating={isUserParticipating(item, user?.id)}
-          onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
-        />
-      )}
-      ListEmptyComponent={<Text style={styles.empty}>Aucun événement ce jour-là.</Text>}
-    />
+        )}
+        ListEmptyComponent={<Text style={styles.empty}>Rien de prévu ce jour-là.</Text>}
+      />
+    </PaperBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { backgroundColor: theme.colors.background },
-  content: { padding: theme.spacing.md, gap: theme.spacing.md },
-  header: { gap: theme.spacing.md },
-  calendar: { borderRadius: theme.radius.md, overflow: "hidden" },
-  dayTitle: { fontSize: theme.fontSize.md, fontWeight: "700", color: theme.colors.text },
-  empty: { fontSize: theme.fontSize.md, color: theme.colors.textMuted, textAlign: "center" },
+  list: { backgroundColor: "transparent" }, // laisse voir le quadrillage
+  // Espace entre les fiches : les rubans dépassent au-dessus de chacune, comme dans la liste.
+  content: { padding: theme.spacing.lg, paddingTop: theme.spacing.xl, gap: theme.spacing.xl },
+  header: { gap: theme.spacing.lg },
+  calendarCard: { paddingHorizontal: theme.spacing.xs },
+  monthTitle: { fontFamily: theme.fonts.hand, fontSize: 30, color: theme.colors.text },
+  dayTitle: { fontFamily: theme.fonts.hand, fontSize: 26, color: theme.colors.text },
+  empty: { fontFamily: theme.fonts.hand, fontSize: 22, color: theme.colors.textMuted, textAlign: "center" },
 });

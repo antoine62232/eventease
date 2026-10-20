@@ -1,8 +1,11 @@
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { PaperBackground } from "@/components/ui/PaperBackground";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
+import { formatMonthYear } from "@/utils/dates";
 
 /** Date ISO dans `days` jours (négatif = dans le passé), à l'heure indiquée. */
 function inDays(days: number, hour: number): string {
@@ -34,19 +37,25 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* user ne peut pas être null ici : l'écran est protégé par le guard. */}
-      <Text style={styles.name}>{user?.name}</Text>
-      <Text style={styles.email}>{user?.email}</Text>
+    <PaperBackground>
+      <View style={styles.container}>
+        {/* La fiche du membre, comme une carte d'adhérent glissée dans le carnet. */}
+        <Card tilt={-1} tape="pink" style={styles.memberCard}>
+          {/* user ne peut pas être null ici : l'écran est protégé par le guard. */}
+          <Text style={styles.name}>{user?.name}</Text>
+          <Text style={styles.email}>{user?.email}</Text>
+          {user !== null && <Text style={styles.cardLabel}>membre depuis {formatMonthYear(user.createdAt)}</Text>}
+        </Card>
 
-      {/* __DEV__ vaut true en développement et false dans l'app compilée : ce bouton n'existera jamais en production. */}
-      {__DEV__ && (
-        <Button title="Créer des événements de test" variant="secondary" onPress={createTestEvents} />
-      )}
+        {/* __DEV__ vaut true en développement et false dans l'app compilée : ce bouton n'existera jamais en production. */}
+        {__DEV__ && (
+          <Button title="Créer des événements de test" variant="secondary" onPress={createTestEvents} />
+        )}
 
-      {/* Aucune navigation manuelle : signOut met user à null, le guard redirige. */}
-      <Button title="Se déconnecter" variant="danger" onPress={signOut} />
-    </View>
+        {/* Aucune navigation manuelle : signOut met user à null, le guard redirige. */}
+        <Button title="Se déconnecter" variant="danger" onPress={signOut} />
+      </View>
+    </PaperBackground>
   );
 }
 
@@ -56,8 +65,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: theme.spacing.lg,
     gap: theme.spacing.md,
-    backgroundColor: theme.colors.background,
   },
-  name: { fontSize: theme.fontSize.xl, fontWeight: "700", color: theme.colors.text, textAlign: "center" },
-  email: { fontSize: theme.fontSize.md, color: theme.colors.textMuted, textAlign: "center", marginBottom: theme.spacing.md },
+  memberCard: { alignItems: "center", paddingVertical: theme.spacing.xl, marginBottom: theme.spacing.lg },
+  cardLabel: { fontFamily: theme.fonts.hand, fontSize: 22, color: theme.colors.textMuted },
+  name: { fontFamily: theme.fonts.hand, fontSize: theme.fontSize.handXl, lineHeight: 56, color: theme.colors.text, textAlign: "center" },
+  email: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.md, color: theme.colors.textMuted, textAlign: "center" },
 });

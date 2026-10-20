@@ -48,11 +48,11 @@ const styles = StyleSheet.create({
   base: {
     minHeight: 48, // zone tactile confortable pour un doigt
     paddingHorizontal: theme.spacing.lg,
-    borderRadius: theme.radius.md,
+    borderRadius: theme.radius.sm, // coins presque droits : du papier, pas une pilule
     alignItems: "center",
     justifyContent: "center",
   },
-  text: { fontSize: theme.fontSize.md, fontWeight: "600" },
+  text: { fontFamily: theme.fonts.bodyBold, fontSize: theme.fontSize.md },
   pressed: { opacity: 0.8 },
   inactive: { opacity: 0.5 },
 });
@@ -62,7 +62,7 @@ const variantStyles = StyleSheet.create({
   primary: { backgroundColor: theme.colors.primary },
   secondary: {
     backgroundColor: theme.colors.surface,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: theme.colors.primary,
   },
   danger: { backgroundColor: theme.colors.danger },

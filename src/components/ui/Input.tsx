@@ -27,17 +27,18 @@ export function Input({ label, error, style, ...rest }: InputProps) {
 
 const styles = StyleSheet.create({
   container: { gap: theme.spacing.xs, alignSelf: "stretch" },
-  label: { fontSize: theme.fontSize.sm, fontWeight: "600", color: theme.colors.text },
+  label: { fontFamily: theme.fonts.hand, fontSize: 22, color: theme.colors.text },
   input: {
     minHeight: 48,
     paddingHorizontal: theme.spacing.md,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: theme.radius.md,
+    borderRadius: theme.radius.sm,
     backgroundColor: theme.colors.surface,
+    fontFamily: theme.fonts.body,
     fontSize: theme.fontSize.md,
     color: theme.colors.text,
   },
   inputError: { borderColor: theme.colors.danger },
-  error: { fontSize: theme.fontSize.sm, color: theme.colors.danger },
+  error: { fontFamily: theme.fonts.bodyMedium, fontSize: theme.fontSize.sm, color: theme.colors.danger },
 });

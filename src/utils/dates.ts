@@ -6,6 +6,8 @@ const DAY_FORMATTER = new Intl.DateTimeFormat("fr-FR", {
   year: "numeric",
 });
 
+const MONTH_YEAR_FORMATTER = new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric" });
+
 const TIME_FORMATTER = new Intl.DateTimeFormat("fr-FR", {
   hour: "2-digit",
   minute: "2-digit",
@@ -91,4 +93,9 @@ export function toLocalDayKey(isoDate: string): string {
   const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() va de 0 à 11
   const day = String(date.getDate()).padStart(2, "0");
   return `${date.getFullYear()}-${month}-${day}`;
+}
+
+/** "octobre 2026", dans le fuseau horaire du téléphone. */
+export function formatMonthYear(isoDate: string): string {
+  return MONTH_YEAR_FORMATTER.format(new Date(isoDate));
 }

@@ -2,7 +2,9 @@ import DateTimePicker, { type DateTimePickerChangeEvent } from "@react-native-co
 import { useState } from "react";
 import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
+import { PaperBackground } from "@/components/ui/PaperBackground";
 import { theme } from "@/constants/theme";
 import { useGeocoding } from "@/hooks/useGeocoding";
 import type { EventInput, EventLocation } from "@/types/event";
@@ -97,77 +99,83 @@ export function EventForm({ initialValues, submitLabel, allowPastDate, onSubmit 
   const isoDate = date.toISOString();
 
   return (
-    <KeyboardAvoidingView style={styles.screen} behavior="padding">
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Input
-          label="Titre"
-          value={title}
-          onChangeText={setTitle}
-          error={errors.title}
-          maxLength={EVENT_TITLE_MAX_LENGTH} // bloque la saisie au-delà, en plus de la validation
-          placeholder="Atelier, conférence, sortie..."
-        />
+    <PaperBackground>
+      <KeyboardAvoidingView style={styles.screen} behavior="padding">
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          {/* Les champs sur une fiche droite : une fiche penchée gênerait la saisie. */}
+          <Card tape="mint" style={styles.formCard}>
+            <Input
+              label="Titre"
+              value={title}
+              onChangeText={setTitle}
+              error={errors.title}
+              maxLength={EVENT_TITLE_MAX_LENGTH} // bloque la saisie au-delà, en plus de la validation
+              placeholder="Atelier, conférence, sortie..."
+            />
 
-        <Input
-          label="Description (facultative)"
-          value={description}
-          onChangeText={setDescription}
-          error={errors.description}
-          maxLength={EVENT_DESCRIPTION_MAX_LENGTH}
-          multiline
-          textAlignVertical="top" // Android centre verticalement par défaut
-          style={styles.descriptionInput}
-        />
+            <Input
+              label="Description (facultative)"
+              value={description}
+              onChangeText={setDescription}
+              error={errors.description}
+              maxLength={EVENT_DESCRIPTION_MAX_LENGTH}
+              multiline
+              textAlignVertical="top" // Android centre verticalement par défaut
+              style={styles.descriptionInput}
+            />
 
-        <Input
-          label="Lieu (facultatif)"
-          value={locationQuery}
-          onChangeText={setLocationQuery}
-          error={errors.location}
-          maxLength={EVENT_LOCATION_MAX_LENGTH}
-          placeholder="Ville : Béthune, Lille..."
-          autoCorrect={false}
-        />
+            <Input
+              label="Lieu (facultatif)"
+              value={locationQuery}
+              onChangeText={setLocationQuery}
+              error={errors.location}
+              maxLength={EVENT_LOCATION_MAX_LENGTH}
+              placeholder="Ville : Béthune, Lille..."
+              autoCorrect={false}
+            />
 
-        <View style={styles.dateBlock}>
-          <Text style={styles.label}>Date et heure</Text>
-          <View style={styles.dateRow}>
-            <View style={styles.dateButton}>
-              <Button title={formatDay(isoDate)} variant="secondary" onPress={() => setPickerMode("date")} />
+            <View style={styles.dateBlock}>
+              <Text style={styles.label}>Date et heure</Text>
+              <View style={styles.dateRow}>
+                <View style={styles.dateButton}>
+                  <Button title={formatDay(isoDate)} variant="secondary" onPress={() => setPickerMode("date")} />
+                </View>
+                <Button title={formatTime(isoDate)} variant="secondary" onPress={() => setPickerMode("time")} />
+              </View>
+              {errors.date !== undefined && <Text style={styles.error}>{errors.date}</Text>}
             </View>
-            <Button title={formatTime(isoDate)} variant="secondary" onPress={() => setPickerMode("time")} />
-          </View>
-          {errors.date !== undefined && <Text style={styles.error}>{errors.date}</Text>}
-        </View>
+          </Card>
 
-        {/* Monté uniquement quand on en a besoin : sur Android, le monter ouvre le dialogue. */}
-        {pickerMode !== null && (
-          <DateTimePicker
-            value={date}
-            mode={pickerMode}
-            is24Hour
-            minimumDate={allowPastDate ? undefined : new Date()} // jours passés grisés à la création
-            onValueChange={handlePickerValueChange}
-            onDismiss={handlePickerDismiss}
-          />
-        )}
+          {/* Monté uniquement quand on en a besoin : sur Android, le monter ouvre le dialogue. */}
+          {pickerMode !== null && (
+            <DateTimePicker
+              value={date}
+              mode={pickerMode}
+              is24Hour
+              minimumDate={allowPastDate ? undefined : new Date()} // jours passés grisés à la création
+              onValueChange={handlePickerValueChange}
+              onDismiss={handlePickerDismiss}
+            />
+          )}
 
-        {submitError !== null && <Text style={styles.submitError}>{submitError}</Text>}
+          {submitError !== null && <Text style={styles.submitError}>{submitError}</Text>}
 
-        <Button title={submitLabel} onPress={handleSubmit} loading={isGeocoding || isSubmitting} />
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <Button title={submitLabel} onPress={handleSubmit} loading={isGeocoding || isSubmitting} />
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </PaperBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: theme.colors.background },
-  container: { padding: theme.spacing.lg, gap: theme.spacing.md },
+  screen: { flex: 1 }, // transparent : laisse voir le quadrillage
+  container: { padding: theme.spacing.lg, paddingTop: theme.spacing.xl, gap: theme.spacing.lg },
+  formCard: { gap: theme.spacing.md },
   descriptionInput: { minHeight: 120, paddingTop: theme.spacing.sm },
   dateBlock: { gap: theme.spacing.xs },
-  label: { fontSize: theme.fontSize.sm, fontWeight: "600", color: theme.colors.text },
+  label: { fontFamily: theme.fonts.hand, fontSize: 22, color: theme.colors.text },
   dateRow: { flexDirection: "row", gap: theme.spacing.sm },
   dateButton: { flex: 1 }, // le jour prend la place restante, l'heure garde sa largeur
-  error: { fontSize: theme.fontSize.sm, color: theme.colors.danger },
-  submitError: { fontSize: theme.fontSize.sm, color: theme.colors.danger, textAlign: "center" },
+  error: { fontFamily: theme.fonts.bodyMedium, fontSize: theme.fontSize.sm, color: theme.colors.danger },
+  submitError: { fontFamily: theme.fonts.bodyMedium, fontSize: theme.fontSize.sm, color: theme.colors.danger, textAlign: "center" },
 });

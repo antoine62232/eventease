@@ -30,6 +30,6 @@ const styles = StyleSheet.create({
     padding: theme.spacing.lg,
     gap: theme.spacing.md,
   },
-  title: { fontSize: theme.fontSize.lg, fontWeight: "700", color: theme.colors.text, textAlign: "center" },
-  message: { fontSize: theme.fontSize.md, color: theme.colors.textMuted, textAlign: "center" },
+  title: { fontFamily: theme.fonts.hand, fontSize: theme.fontSize.handLg, color: theme.colors.text, textAlign: "center" },
+  message: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.md, color: theme.colors.textMuted, textAlign: "center" },
 });

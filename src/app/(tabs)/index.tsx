@@ -2,10 +2,12 @@ import { router } from "expo-router";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { EventCard } from "@/components/events/EventCard";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PaperBackground } from "@/components/ui/PaperBackground";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
 import { orderForDisplay } from "@/utils/dates";
+import { paperDecor } from "@/utils/paper";
 import { isUserParticipating } from "@/utils/participation";
 
 export default function EventsScreen() {
@@ -28,39 +30,43 @@ export default function EventsScreen() {
     return <EmptyState title="Oups" message={error} actionLabel="Réessayer" onAction={reload} />;
   }
 
-  // État 3 : la liste, vide ou non.
+  // État 3 : la liste, vide ou non, posée sur le papier quadrillé.
   return (
-    <FlatList
-      data={orderForDisplay(events)}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <EventCard
-          event={item}
-          isParticipating={isUserParticipating(item, user?.id)}
-          onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
-        />
-      )}
-      // Liste vide : on étire le conteneur pour centrer le message.
-      contentContainerStyle={events.length === 0 ? styles.emptyContent : styles.content}
-      ListEmptyComponent={
-        <EmptyState
-          title="Aucun événement"
-          message="Crée le premier événement de l'association."
-          actionLabel="Créer un événement"
-          onAction={goToForm}
-        />
-      }
-      // Tirer vers le bas pour relire le stockage.
-      refreshing={isLoading}
-      onRefresh={reload}
-      style={styles.list}
-    />
+    <PaperBackground>
+      <FlatList
+        data={orderForDisplay(events)}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item, index }) => (
+          <EventCard
+            {...paperDecor(index)}
+            event={item}
+            isParticipating={isUserParticipating(item, user?.id)}
+            onPress={() => router.push({ pathname: "/event/[id]", params: { id: item.id } })}
+          />
+        )}
+        // Liste vide : on étire le conteneur pour centrer le message.
+        contentContainerStyle={events.length === 0 ? styles.emptyContent : styles.content}
+        ListEmptyComponent={
+          <EmptyState
+            title="Aucun événement"
+            message="Crée le premier événement de l'association."
+            actionLabel="Créer un événement"
+            onAction={goToForm}
+          />
+        }
+        // Tirer vers le bas pour relire le stockage.
+        refreshing={isLoading}
+        onRefresh={reload}
+        style={styles.list}
+      />
+    </PaperBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { backgroundColor: theme.colors.background },
-  content: { padding: theme.spacing.md, gap: theme.spacing.md },
+  list: { backgroundColor: "transparent" }, // laisse voir le quadrillage
+  // Espace entre les fiches plus grand : les rubans dépassent au-dessus de chacune.
+  content: { padding: theme.spacing.lg, paddingTop: theme.spacing.xl, gap: theme.spacing.xl },
   emptyContent: { flexGrow: 1 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.colors.background },
 });
