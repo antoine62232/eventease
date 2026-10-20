@@ -28,9 +28,11 @@ export function DistanceInfo({ location }: DistanceInfoProps) {
       break;
   }
 
-  return <Text style={styles.text}>{text}</Text>;
+  // La distance s'écrit "à la main", comme une annotation. Les messages d'aide restent en texte droit, plus lisible.
+  return <Text style={userLocation.status === "success" ? styles.annotation : styles.help}>{text}</Text>;
 }
 
 const styles = StyleSheet.create({
-  text: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted },
+  annotation: { fontFamily: theme.fonts.hand, fontSize: 22, color: theme.colors.primary },
+  help: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textMuted },
 });

@@ -20,8 +20,3 @@ export function findClosestSlotIndex(slots: number[], target: number): number {
   }
   return bestIndex;
 }
-
-/** "ciel dégagé" -> "Ciel dégagé". */
-export function capitalize(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}

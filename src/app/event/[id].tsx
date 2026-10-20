@@ -5,7 +5,10 @@ import { DistanceInfo } from "@/components/events/DistanceInfo";
 import { ParticipationToggle } from "@/components/events/ParticipationToggle";
 import { WeatherCard } from "@/components/events/WeatherCard";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Highlight } from "@/components/ui/Highlight";
+import { PaperBackground } from "@/components/ui/PaperBackground";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
@@ -73,67 +76,75 @@ export default function EventDetailScreen() {
   };
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{event.title}</Text>
-      <Text style={styles.date}>{formatEventDate(event.date)}</Text>
+    <PaperBackground>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
+        <Text style={[styles.title, isPast && styles.pastTitle]}>{event.title}</Text>
+        <Highlight style={styles.date}>{formatEventDate(event.date)}</Highlight>
 
-      {event.location !== null && (
-        <>
-          <Text style={styles.location}>{event.location.label}</Text>
-          <DistanceInfo location={event.location} />
-        </>
-      )}
+        {/* Infos à gauche, post-it météo à droite. */}
+        <View style={styles.infoRow}>
+          <View style={styles.infoColumn}>
+            {event.location !== null && (
+              <>
+                <Text style={styles.location}>{event.location.label}</Text>
+                <DistanceInfo location={event.location} />
+              </>
+            )}
+            {isPast && <Text style={styles.meta}>Cet événement est passé.</Text>}
+            <Text style={styles.meta}>
+              {formatParticipantCount(event.participantIds.length)}
+              {isOwner ? " · c'est toi qui organises" : ""}
+            </Text>
+          </View>
 
-      {isPast && <Text style={styles.meta}>Cet événement est passé.</Text>}
-
-      <Text style={styles.meta}>
-        {formatParticipantCount(event.participantIds.length)}
-        {isOwner ? " · Tu es l'organisateur" : ""}
-      </Text>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Description</Text>
-        <Text style={styles.description}>
-          {event.description !== "" ? event.description : "Aucune description."}
-        </Text>
-      </View>
-
-      {/* Météo : seulement s'il y a un lieu, et pas pour un événement passé (l'API ne donne que des prévisions). */}
-      {event.location !== null && !isPast && <WeatherCard location={event.location} date={event.date} />}
-
-      {/* Participation : ouverte à tout membre connecté, créateur compris. */}
-      <View style={styles.actions}>
-        <ParticipationToggle
-          isParticipating={isParticipating}
-          isPast={isPast}
-          onToggle={handleToggleParticipation}
-        />
-      </View>
-
-      {/* Actions réservées au créateur. Le service refuse de toute façon les autres. */}
-      {isOwner && (
-        <View style={styles.actions}>
-          <Button
-            title="Modifier"
-            variant="secondary"
-            onPress={() => router.push({ pathname: "/event/form", params: { id: event.id } })}
-          />
-          <Button title="Supprimer" variant="danger" onPress={confirmDelete} loading={isDeleting} />
+          {/* Météo : seulement s'il y a un lieu, et pas pour un événement passé (l'API ne donne que des prévisions). */}
+          {event.location !== null && !isPast && <WeatherCard location={event.location} date={event.date} />}
         </View>
-      )}
-    </ScrollView>
+
+        <Card style={styles.descriptionCard}>
+          <Text style={styles.sectionTitle}>Le programme</Text>
+          <Text style={styles.description}>
+            {event.description !== "" ? event.description : "Aucune description."}
+          </Text>
+        </Card>
+
+        {/* Participation : ouverte à tout membre connecté, créateur compris. */}
+        <View style={styles.actions}>
+          <ParticipationToggle
+            isParticipating={isParticipating}
+            isPast={isPast}
+            onToggle={handleToggleParticipation}
+          />
+        </View>
+
+        {/* Actions réservées au créateur. Le service refuse de toute façon les autres. */}
+        {isOwner && (
+          <View style={styles.actions}>
+            <Button
+              title="Modifier"
+              variant="secondary"
+              onPress={() => router.push({ pathname: "/event/form", params: { id: event.id } })}
+            />
+            <Button title="Supprimer" variant="danger" onPress={confirmDelete} loading={isDeleting} />
+          </View>
+        )}
+      </ScrollView>
+    </PaperBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: theme.colors.background },
+  screen: { flex: 1, backgroundColor: "transparent" }, // laisse voir le quadrillage
   container: { padding: theme.spacing.lg, gap: theme.spacing.sm },
-  title: { fontSize: theme.fontSize.xl, fontWeight: "700", color: theme.colors.text },
-  date: { fontSize: theme.fontSize.md, fontWeight: "600", color: theme.colors.primary },
-  meta: { fontSize: theme.fontSize.sm, color: theme.colors.textMuted },
-  location: { fontSize: theme.fontSize.md, color: theme.colors.text },
-  section: { marginTop: theme.spacing.md, gap: theme.spacing.xs },
-  sectionTitle: { fontSize: theme.fontSize.sm, fontWeight: "700", color: theme.colors.text },
-  description: { fontSize: theme.fontSize.md, color: theme.colors.text, lineHeight: 22 },
+  title: { fontFamily: theme.fonts.hand, fontSize: theme.fontSize.handXl, lineHeight: 54, color: theme.colors.text },
+  pastTitle: { color: theme.colors.textMuted, textDecorationLine: "line-through" },
+  date: { fontFamily: theme.fonts.bodySemiBold, fontSize: 17 },
+  infoRow: { flexDirection: "row", alignItems: "flex-start", gap: theme.spacing.md, marginTop: theme.spacing.md },
+  infoColumn: { flex: 1, gap: theme.spacing.sm },
+  meta: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.sm, color: theme.colors.textMuted },
+  location: { fontFamily: theme.fonts.bodySemiBold, fontSize: theme.fontSize.md, color: theme.colors.text },
+  descriptionCard: { marginTop: theme.spacing.lg },
+  sectionTitle: { fontFamily: theme.fonts.hand, fontSize: theme.fontSize.hand, color: theme.colors.text },
+  description: { fontFamily: theme.fonts.body, fontSize: theme.fontSize.md, color: theme.colors.text, lineHeight: 23 },
   actions: { marginTop: theme.spacing.lg, gap: theme.spacing.sm },
 });
