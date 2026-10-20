@@ -1,4 +1,4 @@
-import "@/constants/calendarLocale"; // import pour son effet : traduit le calendrier en français
+import "@/constants/calendarLocale";
 import { router } from "expo-router";
 import { useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
