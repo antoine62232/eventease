@@ -1,4 +1,3 @@
-// src/hooks/useWeather.ts
 import { useEffect, useState } from "react";
 import { getForecastAt } from "@/services/weatherService";
 import type { Forecast } from "@/types/weather";

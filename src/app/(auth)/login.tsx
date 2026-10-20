@@ -1,4 +1,3 @@
-// src/app/(auth)/login.tsx
 import { Link } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, ScrollView, StyleSheet, Text } from "react-native";

@@ -1,4 +1,3 @@
-// src/app/(tabs)/profile.tsx
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { theme } from "@/constants/theme";

@@ -1,4 +1,3 @@
-// src/app/(tabs)/calendar.tsx
 import "@/constants/calendarLocale"; // import pour son effet : traduit le calendrier en français
 import { router } from "expo-router";
 import { useState } from "react";

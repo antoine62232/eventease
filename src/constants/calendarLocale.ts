@@ -1,4 +1,3 @@
-// src/constants/calendarLocale.ts
 import { LocaleConfig } from "react-native-calendars";
 
 // Traduction du calendrier, enregistrée une seule fois au chargement de ce module.

@@ -1,4 +1,3 @@
-// src/app/(tabs)/index.tsx
 import { router } from "expo-router";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { EventCard } from "@/components/events/EventCard";

@@ -1,4 +1,3 @@
-// src/context/EventsContext.tsx
 import { createContext, type ReactNode, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import * as eventService from "@/services/eventService";

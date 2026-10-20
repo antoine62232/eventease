@@ -1,4 +1,3 @@
-// src/utils/calendar.ts
 import type { CalendarProps } from "react-native-calendars";
 import { theme } from "@/constants/theme";
 import type { AppEvent } from "@/types/event";

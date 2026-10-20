@@ -1,5 +1,3 @@
-// src/types/weather.ts
-
 /** Prévision retenue pour un événement, déjà convertie dans nos unités. */
 export type Forecast = {
   temperature: number; // °C, arrondie

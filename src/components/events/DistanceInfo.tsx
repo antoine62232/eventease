@@ -1,4 +1,3 @@
-// src/components/events/DistanceInfo.tsx
 import { StyleSheet, Text } from "react-native";
 import { theme } from "@/constants/theme";
 import { useUserLocation } from "@/hooks/useUserLocation";

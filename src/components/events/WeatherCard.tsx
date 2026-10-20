@@ -1,4 +1,3 @@
-// src/components/events/WeatherCard.tsx
 import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
 import { Card } from "@/components/ui/Card";
 import { theme } from "@/constants/theme";
