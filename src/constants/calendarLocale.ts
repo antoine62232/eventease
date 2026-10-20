@@ -1,0 +1,16 @@
+// src/constants/calendarLocale.ts
+import { LocaleConfig } from "react-native-calendars";
+
+// Traduction du calendrier, enregistrée une seule fois au chargement de ce module.
+// La librairie est en anglais par défaut ("October", "Mon"...).
+LocaleConfig.locales.fr = {
+  monthNames: [
+    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
+  ],
+  monthNamesShort: ["Janv.", "Févr.", "Mars", "Avr.", "Mai", "Juin", "Juil.", "Août", "Sept.", "Oct.", "Nov.", "Déc."],
+  dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+  dayNamesShort: ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."],
+  today: "Aujourd'hui",
+};
+LocaleConfig.defaultLocale = "fr";
