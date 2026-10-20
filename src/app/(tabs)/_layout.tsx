@@ -12,13 +12,22 @@ export default function TabsLayout() {
         options={{
           title: "Événements",
           tabBarIcon: ({ color, size }) => (
-            <TabIcon name={{ ios: "calendar", android: "calendar_month" }} color={color} size={size} />
+            <TabIcon name={{ ios: "list.bullet", android: "event_list" }} color={color} size={size} />
           ),
           // Action principale de l'écran, toujours accessible même quand la liste est longue.
           headerRight: () => (
             <Link href="/event/form" style={styles.headerAction}>
               Ajouter
             </Link>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          title: "Calendrier",
+          tabBarIcon: ({ color, size }) => (
+            <TabIcon name={{ ios: "calendar", android: "calendar_month" }} color={color} size={size} />
           ),
         }}
       />

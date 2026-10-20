@@ -82,3 +82,15 @@ export function withTimePart(current: Date, picked: Date): Date {
   result.setHours(picked.getHours(), picked.getMinutes(), 0, 0);
   return result;
 }
+
+/**
+ * Jour local au format "YYYY-MM-DD", celui qu'utilise react-native-calendars.
+ * Exemple à Paris : "2026-10-22T22:30:00.000Z" -> "2026-10-23".
+ * Surtout pas isoDate.slice(0, 10) : ce serait le jour en UTC, pas celui du téléphone.
+ */
+export function toLocalDayKey(isoDate: string): string {
+  const date = new Date(isoDate);
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() va de 0 à 11
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
