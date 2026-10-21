@@ -2,6 +2,7 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { PaperBackground } from "@/components/ui/PaperBackground";
+import { IS_DEMO } from "@/constants/config";
 import { theme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { useEvents } from "@/hooks/useEvents";
@@ -47,8 +48,8 @@ export default function ProfileScreen() {
           {user !== null && <Text style={styles.cardLabel}>membre depuis {formatMonthYear(user.createdAt)}</Text>}
         </Card>
 
-        {/* __DEV__ vaut true en développement et false dans l'app compilée : ce bouton n'existera jamais en production. */}
-        {__DEV__ && (
+        {/* __DEV__ : vrai dans Expo Go. IS_DEMO : vrai seulement dans l'APK de démo. Jamais dans une vraie version publiée. */}
+        {(__DEV__ || IS_DEMO) && (
           <Button title="Créer des événements de test" variant="secondary" onPress={createTestEvents} />
         )}
 
