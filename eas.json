@@ -6,10 +6,16 @@
   "build": {
     "preview": {
       "distribution": "internal",
+      "environment": "preview",
+      "env": {
+        "EXPO_PUBLIC_DEMO": "true"
+      },
       "android": {
         "buildType": "apk"
       }
     },
-    "production": {}
+    "production": {
+      "environment": "production"
+    }
   }
 }

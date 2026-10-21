@@ -56,6 +56,15 @@ Scanner le QR code avec Expo Go. Le PC et le téléphone doivent être sur le m�
 
 En développement, le bouton « Créer des événements de test » de l'onglet Profil ajoute trois événements, dont deux avec un lieu.
 
+## APK de démonstration
+
+```bash
+npx eas-cli@latest env:set --name EXPO_PUBLIC_OPENWEATHER_API_KEY --value ta_cle --environment preview --visibility plaintext
+npx eas-cli@latest build -p android --profile preview
+```
+
+`.env.local` n'est pas envoyé au serveur de build (il est ignoré par Git) : la clé OpenWeather est donc déclarée comme variable d'environnement EAS, une seule fois. Le profil `preview` active aussi `EXPO_PUBLIC_DEMO`, qui affiche le bouton « Créer des événements de test » dans l'APK.
+
 ## Vérifications
 
 ```bash
